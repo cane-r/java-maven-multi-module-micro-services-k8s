@@ -5,26 +5,26 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.bookordering</groupId>
-        <artifactId>book-ordering</artifactId>
+        <artifactId>common</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>customer-api</artifactId>
+    <artifactId>web</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.bookordering</groupId>
-            <artifactId>common-domain</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
     </dependencies>
 

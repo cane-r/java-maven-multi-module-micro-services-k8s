@@ -1,0 +1,105 @@
+diff --git a/customer-application/pom.xml b/customer-application/pom.xml
+index d934165..4c090c2 100644
+--- a/customer-application/pom.xml
++++ b/customer-application/pom.xml
+@@ -34,14 +34,14 @@
+                 <artifactId>spring-boot-maven-plugin</artifactId>
+                 <configuration>
+                     <image>
+-                        <name>canersir/${project.artifactId}:${project.version}</name>
++                        <name>canersir/${project.artifactId}</name>
+                     </image>
+                 </configuration>
+                 <executions>
+                     <execution>
+                         <phase>install</phase>
+                         <goals>
+-                            <!--<goal>build-image</goal>-->
++                            <goal>build-image</goal>
+                             <goal>repackage</goal>
+                         </goals>
+                     </execution>
+diff --git a/order-api/src/main/java/com/bookordering/order/api/rest/OrderController.java b/order-api/src/main/java/com/bookordering/order/api/rest/OrderController.java
+index 34125d8..93112b0 100644
+--- a/order-api/src/main/java/com/bookordering/order/api/rest/OrderController.java
++++ b/order-api/src/main/java/com/bookordering/order/api/rest/OrderController.java
+@@ -5,7 +5,10 @@ import jakarta.validation.Valid;
+ import org.slf4j.Logger;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.core.annotation.AliasFor;
++import org.springframework.http.HttpEntity;
++import org.springframework.http.HttpMethod;
+ import org.springframework.web.bind.annotation.*;
++import org.springframework.web.client.RestTemplate;
+ 
+ import java.math.BigInteger;
+ @RestController
+@@ -21,6 +24,20 @@ public class OrderController {
+     }
+     @GetMapping
+     public String helloCustomer(@Valid @RequestBody Customer customer) {
+-        return "Hello " + customer.getName();
++        RestTemplate client = new RestTemplate();
++        HttpEntity<Customer> request = new HttpEntity<>(new Customer("caner" ,1L));
++        logger.info("helloCustomer");
++        try {
++            String c = client.exchange("http://customer-service.default.svc.cluster.local/",
++                    HttpMethod.GET,
++                    request,
++                    String.class).getBody();
++            logger.info("Returning response");
++            return "Response from service: " + c;
++        }
++        catch (Exception e) {
++            logger.error("Error from service!");
++            return "Error!";
++        }
+     }
+ }
+diff --git a/order-application/pom.xml b/order-application/pom.xml
+index d0f6988..33fc840 100644
+--- a/order-application/pom.xml
++++ b/order-application/pom.xml
+@@ -36,14 +36,14 @@
+                 <artifactId>spring-boot-maven-plugin</artifactId>
+                 <configuration>
+                     <image>
+-                        <name>canersir/${project.artifactId}:${project.version}</name>
++                        <name>canersir/${project.artifactId}</name>
+                     </image>
+                 </configuration>
+                 <executions>
+                     <execution>
+                         <phase>install</phase>
+                         <goals>
+-                            <!--<goal>build-image</goal>-->
++                            <goal>build-image</goal>
+                             <goal>repackage</goal>
+                         </goals>
+                     </execution>
+diff --git a/skaffold.yaml b/skaffold.yaml
+index 0c48856..80f13c0 100644
+--- a/skaffold.yaml
++++ b/skaffold.yaml
+@@ -9,4 +9,19 @@ build:
+     push: false
+   artifacts:
+     - image: canersir/order-app
+-      #context: auth-service
+\ No newline at end of file
++      custom:
++        buildCommand: mvn -U clean install
++      context: order-application
++      sync:
++        manual:
++          - src: "src/**/*.java"
++            dest: .
++
++#    - image: canersir/customer-app
++#      context: customer-application
++#      custom:
++#        buildCommand: mvn -U clean install
++#      sync:
++#        manual:
++#          - src: "src/**/*.java"
++#            dest: .

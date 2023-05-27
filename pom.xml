@@ -14,11 +14,15 @@
     <artifactId>book-ordering</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <modules>
         <module>customer-api</module>
         <module>book-api</module>
         <module>order-api</module>
         <module>common</module>
+        <module>book-application</module>
+        <module>order-application</module>
+        <module>customer-application</module>
     </modules>
 
     <properties>
@@ -28,24 +32,47 @@
         <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
     </properties>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <release>17</release>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <!--<executions>
+                        <execution>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>-->
+                </plugin>
+                <plugin>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <version>3.3.2</version>
+                    <configuration>
+                        <container>
+                            <jvmFlags>
+                                <jvmFlag>-Djava.security.egd=file:/dev/./urandom </jvmFlag>
+                            </jvmFlags>
+                        </container>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>

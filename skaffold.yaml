@@ -1,0 +1,23 @@
+apiVersion: skaffold/v4beta5
+kind: Config
+manifests:
+    rawYaml:
+      - ./infra/k8s/*
+build:
+  artifacts:
+    - image: canersir/order-application
+      context: order-application
+      #jib: {}
+      custom:
+        buildCommand: mvn -U clean install
+      sync:
+        manual:
+          - src: "*"
+            dest: .
+    - image: canersir/customer-application
+      context: customer-application
+  local:
+    push: false
+    useBuildkit: true
+  tagPolicy:
+    sha256: {}
