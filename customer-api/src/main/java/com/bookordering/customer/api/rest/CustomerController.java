@@ -12,7 +12,7 @@ public class CustomerController {
         System.out.println("hey");
         return "Hello " + id;
     }
-    @GetMapping
+    @PostMapping(value = {"/",""})
     public String helloCustomer(@RequestBody Customer customer) {
         System.out.println(customer);
         return "Hello " + customer.getName();

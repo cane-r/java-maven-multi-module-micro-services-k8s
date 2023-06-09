@@ -18,7 +18,13 @@ spec:
         - name: order-service
           image: canersir/order-application
           imagePullPolicy: Never
+          ports:
+            - name: debug-port
+              containerPort: 8088
+              protocol: TCP
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: '-Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8088,server=y,suspend=n'
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://postgres-service:5432/postgres?currentSchema=order&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified"
 ---
@@ -35,6 +41,7 @@ spec:
   ports:
     - name: order-service-port
       protocol: TCP
-      port: 8081
-  type: LoadBalancer
-  loadBalancerIP: ""
+      port: 80
+      targetPort: 8081
+#  type: LoadBalancer
+#  loadBalancerIP: ""

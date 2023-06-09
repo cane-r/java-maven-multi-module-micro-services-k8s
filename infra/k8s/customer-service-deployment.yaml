@@ -18,7 +18,14 @@ spec:
         - name: customer-service
           image: canersir/customer-application
           imagePullPolicy: Never
+          ports:
+            - name: debug-port
+              #kubectl port-forward <pod> 8089:8089
+              containerPort: 8089
+              protocol: TCP
           env:
+            - name: JAVA_TOOL_OPTIONS
+              value: '-Xdebug -agentlib:jdwp=transport=dt_socket,address=0.0.0.0:8089,server=y,suspend=n'
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://postgres-service:5432/postgres?currentSchema=customer&binaryTransfer=true&reWriteBatchedInserts=true&stringtype=unspecified"
 ---
@@ -35,6 +42,7 @@ spec:
   ports:
     - name: customer-service-port
       protocol: TCP
-      port: 8082
-  type: LoadBalancer
-  loadBalancerIP: ""
+      port: 80
+      targetPort: 8082
+#  type: LoadBalancer
+#  loadBalancerIP: ""
